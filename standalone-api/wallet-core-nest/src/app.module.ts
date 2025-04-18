@@ -7,4 +7,4 @@ import { CoreService } from './v1/core/core.service';
   controllers: [CoreController],
   providers: [CoreService],
 })
-export class AppModule { }
+export class AppModule {}

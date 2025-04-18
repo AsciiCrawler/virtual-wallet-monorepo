@@ -1,25 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { ProcessPaymentDto, CreatePaymentDto, CreateUserDto, DepositDto, WalletBalanceDto } from './core.zod';
+import {
+  ProcessPaymentDto,
+  CreatePaymentDto,
+  CreateUserDto,
+  DepositDto,
+  WalletBalanceDto,
+} from './core.zod';
 
 @Injectable()
 export class CoreService {
-    createUser(createUserDto: CreateUserDto): CreateUserDto {
-        return createUserDto;
-    }
+  createUser(createUserDto: CreateUserDto): CreateUserDto {
+    return createUserDto;
+  }
 
-    deposit(depositDto: DepositDto): DepositDto {
-        return depositDto;
-    }
+  deposit(depositDto: DepositDto): DepositDto {
+    return depositDto;
+  }
 
-    createPayment(createPaymentDto: CreatePaymentDto): CreatePaymentDto {
-        return createPaymentDto;
-    }
+  createPayment(createPaymentDto: CreatePaymentDto): CreatePaymentDto {
+    return createPaymentDto;
+  }
 
-    confirmPayment(confirmPayment: ProcessPaymentDto): ProcessPaymentDto {
-        return confirmPayment;
-    }
+  confirmPayment(confirmPayment: ProcessPaymentDto): ProcessPaymentDto {
+    return confirmPayment;
+  }
 
-    walletBalance(walletBalanceDto: WalletBalanceDto): WalletBalanceDto {
-        return walletBalanceDto;
-    }
+  walletBalance(walletBalanceDto: WalletBalanceDto): WalletBalanceDto {
+    return walletBalanceDto;
+  }
 }
