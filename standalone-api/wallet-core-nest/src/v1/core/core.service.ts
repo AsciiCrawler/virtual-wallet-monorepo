@@ -1,66 +1,69 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ProcessPaymentDto, CreatePaymentDto, CreateUserDto, DepositDto, WalletBalanceDto } from './core.zod';
 import { UserRepository } from 'src/repository/user.repository';
 import { PaymentRepository } from 'src/repository/payment.repository';
 import moment from 'moment';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
 
 @Injectable()
 export class CoreService {
   constructor(
     private userRepository: UserRepository,
     private paymentRepository: PaymentRepository,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<any> {
+  async createUser(createUserDto: CreateUserDto): Promise<{ success: boolean }> {
     const createUserResult = await this.userRepository.createUser(createUserDto);
-
-    return createUserResult;
+    if (!createUserResult) throw new InternalServerErrorException('Unexpected error on user creation');
+    return { success: true };
   }
 
-  async deposit(depositDto: DepositDto): Promise<{ newBalance: number }> {
-    const depositFundsResult = await this.userRepository.depositFunds(depositDto.document, depositDto.amount);
-
-    return { newBalance: depositFundsResult.newBalance };
+  async deposit(depositDto: DepositDto): Promise<{ success: boolean }> {
+    await this.userRepository.depositFunds(depositDto.document, depositDto.amount);
+    return { success: true };
   }
 
-  async createPayment(createPaymentDto: CreatePaymentDto): Promise<any> {
-    const createPaymentResult = await this.paymentRepository.createPayment(
-      createPaymentDto.document,
-      createPaymentDto.amount,
-    );
-    return createPaymentResult;
+  async createPayment(
+    createPaymentDto: CreatePaymentDto,
+  ): Promise<{ success: boolean; DEBUG_SESSION_ID: string; DEBUG_CONFIRMATION_CODE: string }> {
+    const { id, code } = await this.paymentRepository.createPayment(createPaymentDto.document, createPaymentDto.amount);
+    return { success: true, DEBUG_SESSION_ID: id, DEBUG_CONFIRMATION_CODE: code };
   }
 
-  // TODO : Transaction Support - Refactor
-  async processPayment(processPaymentDto: ProcessPaymentDto): Promise<any> {
-    const findByIdResult = await this.paymentRepository.findById(processPaymentDto.sessionId);
+  async processPayment(processPaymentDto: ProcessPaymentDto): Promise<{ success: boolean }> {
+    const { sessionId, code } = processPaymentDto;
 
-    if (!findByIdResult) throw new Error('Payment - null');
+    const payment = await this.paymentRepository.findById(sessionId);
+    if (!payment) throw new BadRequestException('Invalid session ID');
+    
+    if (payment.processed) throw new BadRequestException('Payment already processed');
+    if (payment.code !== code) throw new BadRequestException('Invalid verification code');
+    if (moment().isAfter(payment.expiresAt)) throw new BadRequestException('Payment session has expired');
 
-    if (findByIdResult.processed) throw new Error('Payment already processed');
+    const userBalance = await this.userRepository.getBalance(payment.document);
+    if (payment.amount > userBalance) throw new BadRequestException('Insufficient funds for this payment');
 
-    if (findByIdResult.code !== processPaymentDto.code) throw new Error('No valid code');
-
-    if (moment().isAfter(findByIdResult.expiresAt)) throw new Error('Expired payment');
-
-    const balance = await this.userRepository.getBalance(findByIdResult.document);
-
-    if (findByIdResult.amount > balance) throw new Error('Payment is greater than user balance');
-
-    const updatePaymentStatusResult = await this.paymentRepository.updatePaymentStatus(findByIdResult.id, true);
-
-    const reduceBalanceResult = await this.userRepository.reduceBalance(findByIdResult.document, findByIdResult.amount);
-
-    return { newBalance: reduceBalanceResult.newBalance };
+    const session = await this.connection.startSession();
+    return await session
+      .withTransaction(async () => {
+        await this.paymentRepository.updatePaymentStatus(payment.id, true, session);
+        await this.userRepository.reduceBalance(payment.document, payment.amount, session);
+        return { success: true };
+      })
+      .finally(() => {
+        session.endSession();
+      });
   }
 
-  async walletBalance(walletBalanceDto: WalletBalanceDto): Promise<any> {
-    const getUserByDocumentResult = await this.userRepository.getUserByDocument(walletBalanceDto.document);
+  async walletBalance(walletBalanceDto: WalletBalanceDto): Promise<{ balance: number }> {
+    const { document, phone } = walletBalanceDto;
 
-    if (!getUserByDocumentResult) throw new Error('User - null');
+    const user = await this.userRepository.getUserByDocument(document);
+    if (!user) throw new NotFoundException('User not found');
+    if (user.phone !== phone) throw new BadRequestException('Invalid phone number');
 
-    if (getUserByDocumentResult.phone !== walletBalanceDto.phone) throw new Error('No valid phone');
-
-    return getUserByDocumentResult;
+    return { balance: user.balance };
   }
 }

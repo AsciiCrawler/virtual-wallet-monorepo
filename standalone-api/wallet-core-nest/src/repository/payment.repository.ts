@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import moment from 'moment';
-import { Document, Model } from 'mongoose';
+import { ClientSession, Document, Model } from 'mongoose';
 
 @Schema({ collection: 'payments' })
 export class PaymentModel extends Document {
@@ -43,12 +43,12 @@ export class PaymentRepository {
     return payment.save();
   }
 
-  async updatePaymentStatus(id: string, processed: boolean): Promise<PaymentModel | null> {
+  async updatePaymentStatus(id: string, processed: boolean, session?: ClientSession): Promise<PaymentModel | null> {
     return this.paymentModel
       .findByIdAndUpdate(
         id,
         { processed: processed },
-        { new: true }, // Return the updated document
+        { new: true, session }, // Return the updated document
       )
       .exec();
   }

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import { ClientSession, Document, Model } from 'mongoose';
 import { CreateUserDto } from 'src/v1/core/core.zod';
 
 @Schema({ collection: 'users' })
@@ -38,7 +38,7 @@ export class UserRepository {
 
   async depositFunds(document: string, amount: number): Promise<{ newBalance: number }> {
     if (amount <= 0) {
-      throw new Error('Deposit amount must be positive');
+      throw new BadRequestException('Deposit amount must be positive');
     }
 
     const updatedUser = await this.userModel.findOneAndUpdate(
@@ -48,26 +48,25 @@ export class UserRepository {
     );
 
     if (!updatedUser) {
-      throw new Error('User not found');
+      throw new BadRequestException('User not found');
     }
 
     return { newBalance: updatedUser.balance };
   }
 
-  /* TODO : Refactor */
-  async reduceBalance(document: string, amount: number): Promise<{ newBalance: number }> {
+  async reduceBalance(document: string, amount: number, session?: ClientSession): Promise<{ newBalance: number }> {
     if (amount <= 0) {
-      throw new Error('Reduction amount must be positive');
+      throw new BadRequestException('Reduction amount must be positive');
     }
 
     const updatedUser = await this.userModel.findOneAndUpdate(
       { document },
       { $inc: { balance: -amount } }, // Subtract the amount
-      { new: true },
+      { new: true, session },
     );
 
     if (!updatedUser) {
-      throw new Error('User not found');
+      throw new BadRequestException('User not found');
     }
 
     return { newBalance: updatedUser.balance };
@@ -75,17 +74,15 @@ export class UserRepository {
 
   async getBalance(document: string): Promise<number> {
     const user = await this.userModel.findOne({ document }).select('balance');
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new BadRequestException('User not found');
+
     return user.balance;
   }
 
   async getUserByDocument(document: string): Promise<UserModel> {
     const user = await this.userModel.findOne({ document });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new BadRequestException('User not found');
+
     return user;
   }
 }
