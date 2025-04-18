@@ -228,9 +228,5 @@ export function zodToOpenAPI(
     Object.assign(object, zodToOpenAPI(getter(), visited));
   }
 
-  if (object.properties) {
-    console.log({ object: object.properties });
-  }
-
   return object;
 }

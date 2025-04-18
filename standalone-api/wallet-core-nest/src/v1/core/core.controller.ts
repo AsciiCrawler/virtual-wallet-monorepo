@@ -31,50 +31,50 @@ export class CoreController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create-user')
   @ApiBody({ schema: zodToOpenAPI(CreateUserSchema) })
-  createUser(
+  async createUser(
     @Body(new ZodPipe(CreateUserSchema)) creteUserDto: CreateUserDto,
-  ): CreateUserDto {
-    return this.coreService.createUser(creteUserDto);
+  ): Promise<any> {
+    return await this.coreService.createUser(creteUserDto);
   }
 
   @ApiOperation({ summary: 'Deposit funds' })
   @HttpCode(HttpStatus.OK)
   @Post('deposit')
   @ApiBody({ schema: zodToOpenAPI(DepositSchema) })
-  deposit(
+  async deposit(
     @Body(new ZodPipe(DepositSchema)) depositDto: DepositDto,
-  ): DepositDto {
-    return this.coreService.deposit(depositDto);
+  ): Promise<any> {
+    return await this.coreService.deposit(depositDto);
   }
 
   @ApiOperation({ summary: 'Create payment' })
   @HttpCode(HttpStatus.CREATED)
   @Post('create-payment')
   @ApiBody({ schema: zodToOpenAPI(CreatePaymentSchema) })
-  createPayment(
+  async createPayment(
     @Body(new ZodPipe(CreatePaymentSchema)) createPaymentDto: CreatePaymentDto,
-  ): CreatePaymentDto {
-    return this.coreService.createPayment(createPaymentDto);
+  ): Promise<any> {
+    return await this.coreService.createPayment(createPaymentDto);
   }
 
   @ApiOperation({ summary: 'Process payment' })
   @HttpCode(HttpStatus.OK)
   @Post('process-payment')
   @ApiBody({ schema: zodToOpenAPI(ProcessPaymentSchema) })
-  confirmPayment(
+  async processPayment(
     @Body(new ZodPipe(ProcessPaymentSchema))
-    confirmPaymentDto: ProcessPaymentDto,
-  ): ProcessPaymentDto {
-    return this.coreService.confirmPayment(confirmPaymentDto);
+    processPaymentDto: ProcessPaymentDto,
+  ): Promise<any> {
+    return await this.coreService.processPayment(processPaymentDto);
   }
 
   @ApiOperation({ summary: 'Get wallet balance' })
   @HttpCode(HttpStatus.OK)
   @Post('wallet-balance')
   @ApiBody({ schema: zodToOpenAPI(WalletBalanceSchema) })
-  walletBalance(
+  async walletBalance(
     @Body(new ZodPipe(WalletBalanceSchema)) walletBalanceDto: WalletBalanceDto,
-  ): WalletBalanceDto {
+  ): Promise<any> {
     return this.coreService.walletBalance(walletBalanceDto);
   }
 }

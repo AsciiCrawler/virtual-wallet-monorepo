@@ -36,9 +36,9 @@ const nameSchemaElement = z
 
 const sessionIdSchemaElement = z
   .string()
-  .uuid('Session ID must be a valid UUID');
+  .regex(/^[0-9a-fA-F]{24}$/, 'Session ID must be a valid MongoDB ObjectId');
 
-const confirmationCodeSchemaElement = z
+const codeSchemaElement = z
   .string()
   .regex(/^\d{6}$/, 'Confirmation code must be exactly 6 digits');
 
@@ -86,7 +86,7 @@ export type CreatePaymentDto = z.infer<typeof CreatePaymentSchema>;
 export const ProcessPaymentSchema = z
   .object({
     sessionId: sessionIdSchemaElement,
-    confirmationCode: confirmationCodeSchemaElement,
+    code: codeSchemaElement,
   })
   .strict();
 
