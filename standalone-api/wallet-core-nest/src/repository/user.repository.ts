@@ -25,9 +25,7 @@ export const UserModelSchema = SchemaFactory.createForClass(UserModel);
 
 @Injectable()
 export class UserRepository {
-  constructor(
-    @InjectModel(UserModel.name) private userModel: Model<UserModel>,
-  ) {}
+  constructor(@InjectModel(UserModel.name) private userModel: Model<UserModel>) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<UserModel> {
     const createdUser = new this.userModel({
@@ -38,10 +36,7 @@ export class UserRepository {
     return createdUser.save();
   }
 
-  async depositFunds(
-    document: string,
-    amount: number,
-  ): Promise<{ newBalance: number }> {
+  async depositFunds(document: string, amount: number): Promise<{ newBalance: number }> {
     if (amount <= 0) {
       throw new Error('Deposit amount must be positive');
     }
@@ -60,14 +55,11 @@ export class UserRepository {
   }
 
   /* TODO : Refactor */
-  async reduceBalance(
-    document: string,
-    amount: number,
-  ): Promise<{ newBalance: number }> {
+  async reduceBalance(document: string, amount: number): Promise<{ newBalance: number }> {
     if (amount <= 0) {
       throw new Error('Reduction amount must be positive');
     }
-  
+
     const updatedUser = await this.userModel.findOneAndUpdate(
       { document },
       { $inc: { balance: -amount } }, // Subtract the amount
@@ -77,7 +69,7 @@ export class UserRepository {
     if (!updatedUser) {
       throw new Error('User not found');
     }
-  
+
     return { newBalance: updatedUser.balance };
   }
 

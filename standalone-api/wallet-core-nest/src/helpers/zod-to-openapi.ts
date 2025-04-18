@@ -12,18 +12,12 @@ interface ExtendedSchemaObject extends SchemaObject {
   [key: `x-${string}`]: any;
 }
 
-function is<T extends Type<z.ZodTypeAny>>(
-  input: z.ZodTypeAny,
-  factory: T,
-): input is InstanceType<T> {
+function is<T extends Type<z.ZodTypeAny>>(input: z.ZodTypeAny, factory: T): input is InstanceType<T> {
   const factories = z as unknown as Record<string, Type<z.ZodTypeAny>>;
   return factory === factories[input._def.typeName];
 }
 
-export function zodToOpenAPI(
-  zodType: z.ZodTypeAny,
-  visited: Set<any> = new Set(),
-) {
+export function zodToOpenAPI(zodType: z.ZodTypeAny, visited: Set<any> = new Set()) {
   const object: ExtendedSchemaObject = {};
 
   if (zodType.description) {
@@ -202,16 +196,12 @@ export function zodToOpenAPI(
 
   if (is(zodType, z.ZodIntersection)) {
     const { left, right } = zodType._def;
-    const merged = deepmerge(
-      zodToOpenAPI(left, visited),
-      zodToOpenAPI(right, visited),
-      {
-        arrayMerge: (target, source) => {
-          const mergedSet = new Set([...target, ...source]);
-          return Array.from(mergedSet);
-        },
+    const merged = deepmerge(zodToOpenAPI(left, visited), zodToOpenAPI(right, visited), {
+      arrayMerge: (target, source) => {
+        const mergedSet = new Set([...target, ...source]);
+        return Array.from(mergedSet);
       },
-    );
+    });
     Object.assign(object, merged);
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import moment from 'moment';
-import {  Document, Model } from 'mongoose';
+import { Document, Model } from 'mongoose';
 
 @Schema({ collection: 'payments' })
 export class PaymentModel extends Document {
@@ -25,9 +25,7 @@ export const PaymentModelSchema = SchemaFactory.createForClass(PaymentModel);
 
 @Injectable()
 export class PaymentRepository {
-  constructor(
-    @InjectModel(PaymentModel.name) private paymentModel: Model<PaymentModel>,
-  ) {}
+  constructor(@InjectModel(PaymentModel.name) private paymentModel: Model<PaymentModel>) {}
 
   async createPayment(document: string, amount: number): Promise<PaymentModel> {
     const code = Math.floor(Math.random() * 1000000)
@@ -45,10 +43,7 @@ export class PaymentRepository {
     return payment.save();
   }
 
-  async updatePaymentStatus(
-    id: string,
-    processed: boolean,
-  ): Promise<PaymentModel | null> {
+  async updatePaymentStatus(id: string, processed: boolean): Promise<PaymentModel | null> {
     return this.paymentModel
       .findByIdAndUpdate(
         id,
