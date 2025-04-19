@@ -144,7 +144,7 @@ describe('UserService', () => {
 
       try {
         await coreService.processPayment(processPaymentDto);
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Invalid session ID');
       }
@@ -157,7 +157,7 @@ describe('UserService', () => {
 
       try {
         await coreService.processPayment(processPaymentDto);
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Payment already processed');
       }
@@ -170,7 +170,7 @@ describe('UserService', () => {
 
       try {
         await coreService.processPayment(processPaymentDto);
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Invalid verification code');
       }
@@ -184,7 +184,7 @@ describe('UserService', () => {
 
       try {
         await coreService.processPayment(processPaymentDto);
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Payment session has expired');
       }
@@ -196,7 +196,7 @@ describe('UserService', () => {
 
       try {
         await coreService.processPayment(processPaymentDto);
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Insufficient funds for this payment');
       }
@@ -215,10 +215,10 @@ describe('UserService', () => {
 
     it('should return "Invalid phone number" error', async () => {
       jest.spyOn(userRepository, 'getUserByDocument').mockResolvedValueOnce(userModel);
-      
+
       try {
         await coreService.walletBalance({ ...walletBalanceDto, phone: '0000000000' });
-        fail('Expected to throw but did not'); 
+        fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Invalid phone number');
       }

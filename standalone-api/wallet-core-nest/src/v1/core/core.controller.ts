@@ -12,8 +12,11 @@ import {
   DepositSchema,
   WalletBalanceDto,
   WalletBalanceSchema,
+  SuccessResponse,
+  BalanceResponse,
+  CreatePaymentResponse,
 } from './core.zod';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { zodToOpenAPI } from 'src/helpers/zod-to-openapi';
 import { standarResponse, standarResponseType } from 'src/helpers/standar-response';
 
@@ -25,14 +28,16 @@ export class CoreController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create-user')
   @ApiBody({ schema: zodToOpenAPI(CreateUserSchema) })
-  async createUser(@Body(new ZodPipe(CreateUserSchema)) creteUserDto: CreateUserDto): Promise<standarResponseType> {
-    return standarResponse(await this.coreService.createUser(creteUserDto));
+  @ApiResponse({ example: standarResponse({ success: true } as SuccessResponse) })
+  async createUser(@Body(new ZodPipe(CreateUserSchema)) createUserDto: CreateUserDto): Promise<standarResponseType> {
+    return standarResponse(await this.coreService.createUser(createUserDto));
   }
 
   @ApiOperation({ summary: 'Deposit funds' })
   @HttpCode(HttpStatus.OK)
   @Post('deposit')
   @ApiBody({ schema: zodToOpenAPI(DepositSchema) })
+  @ApiResponse({ example: standarResponse({ success: true } as SuccessResponse) })
   async deposit(@Body(new ZodPipe(DepositSchema)) depositDto: DepositDto): Promise<standarResponseType> {
     return standarResponse(await this.coreService.deposit(depositDto));
   }
@@ -41,6 +46,13 @@ export class CoreController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create-payment')
   @ApiBody({ schema: zodToOpenAPI(CreatePaymentSchema) })
+  @ApiResponse({
+    example: standarResponse({
+      success: true,
+      DEBUG_CONFIRMATION_CODE: '234234',
+      DEBUG_SESSION_ID: '6804097b56c7cd64a60b07b2',
+    } as CreatePaymentResponse),
+  })
   async createPayment(
     @Body(new ZodPipe(CreatePaymentSchema)) createPaymentDto: CreatePaymentDto,
   ): Promise<standarResponseType> {
@@ -51,6 +63,7 @@ export class CoreController {
   @HttpCode(HttpStatus.OK)
   @Post('process-payment')
   @ApiBody({ schema: zodToOpenAPI(ProcessPaymentSchema) })
+  @ApiResponse({ example: standarResponse({ success: true } as SuccessResponse) })
   async processPayment(
     @Body(new ZodPipe(ProcessPaymentSchema))
     processPaymentDto: ProcessPaymentDto,
@@ -62,6 +75,7 @@ export class CoreController {
   @HttpCode(HttpStatus.OK)
   @Post('wallet-balance')
   @ApiBody({ schema: zodToOpenAPI(WalletBalanceSchema) })
+  @ApiResponse({ example: standarResponse({ balance: 4500 } as BalanceResponse) })
   async walletBalance(
     @Body(new ZodPipe(WalletBalanceSchema)) walletBalanceDto: WalletBalanceDto,
   ): Promise<standarResponseType> {

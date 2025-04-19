@@ -1,5 +1,20 @@
 import { z } from 'zod';
 
+export type SuccessResponse = {
+  success: boolean;
+};
+
+export type BalanceResponse = {
+  balance: number;
+};
+
+export type CreatePaymentResponse = SuccessResponse & {
+  DEBUG_SESSION_ID: string;
+  DEBUG_CONFIRMATION_CODE: string;
+};
+
+/*  */
+
 const documentSchemaElement = z
   .string()
   .min(8, 'Document must be at least 8 characters')

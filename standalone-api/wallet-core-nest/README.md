@@ -16,10 +16,13 @@ API independiente - SIN SERVIDOR SOAP/LARAVEL
 ## Capturas de pantalla
 
 ![](docs/swagger.png "Swagger")
+![](docs/jest.png "Jest")
+![](docs/cypress.png "Cypress")
 
 ## Vista previa en vivo
 
 [Vista previa en vivo de Swagger](https://wallet-standalone-api.asciicrawler.com/api)
+
 
 ## Requisitos previos
 

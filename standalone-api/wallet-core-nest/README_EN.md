@@ -16,6 +16,8 @@ Standalone api - NO SOAP/LARAVEL SERVER
 ## Screenshots
 
 ![](docs/swagger.png "Swagger")
+![](docs/jest.png "Jest")
+![](docs/cypress.png "Cypress")
 
 ## Live preview
 

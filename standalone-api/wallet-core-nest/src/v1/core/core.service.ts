@@ -1,5 +1,14 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { ProcessPaymentDto, CreatePaymentDto, CreateUserDto, DepositDto, WalletBalanceDto } from './core.zod';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  ProcessPaymentDto,
+  CreatePaymentDto,
+  CreateUserDto,
+  DepositDto,
+  WalletBalanceDto,
+  SuccessResponse,
+  BalanceResponse,
+  CreatePaymentResponse,
+} from './core.zod';
 import { UserRepository } from 'src/repository/user.repository';
 import { PaymentRepository } from 'src/repository/payment.repository';
 import moment from 'moment';
@@ -14,24 +23,22 @@ export class CoreService {
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<{ success: boolean }> {
+  async createUser(createUserDto: CreateUserDto): Promise<SuccessResponse> {
     await this.userRepository.createUser(createUserDto);
     return { success: true };
   }
 
-  async deposit(depositDto: DepositDto): Promise<{ success: boolean }> {
+  async deposit(depositDto: DepositDto): Promise<SuccessResponse> {
     await this.userRepository.depositFunds(depositDto.document, depositDto.amount);
     return { success: true };
   }
 
-  async createPayment(
-    createPaymentDto: CreatePaymentDto,
-  ): Promise<{ success: boolean; DEBUG_SESSION_ID: string; DEBUG_CONFIRMATION_CODE: string }> {
+  async createPayment(createPaymentDto: CreatePaymentDto): Promise<CreatePaymentResponse> {
     const { id, code } = await this.paymentRepository.createPayment(createPaymentDto.document, createPaymentDto.amount);
     return { success: true, DEBUG_SESSION_ID: id, DEBUG_CONFIRMATION_CODE: code };
   }
 
-  async processPayment(processPaymentDto: ProcessPaymentDto): Promise<{ success: boolean }> {
+  async processPayment(processPaymentDto: ProcessPaymentDto): Promise<SuccessResponse> {
     const { sessionId, code } = processPaymentDto;
 
     const payment = await this.paymentRepository.findById(sessionId);
@@ -55,7 +62,7 @@ export class CoreService {
       });
   }
 
-  async walletBalance(walletBalanceDto: WalletBalanceDto): Promise<{ balance: number }> {
+  async walletBalance(walletBalanceDto: WalletBalanceDto): Promise<BalanceResponse> {
     const { document, phone } = walletBalanceDto;
 
     const user = await this.userRepository.getUserByDocument(document);
