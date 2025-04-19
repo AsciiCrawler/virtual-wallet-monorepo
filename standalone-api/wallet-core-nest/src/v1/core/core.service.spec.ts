@@ -138,6 +138,69 @@ describe('UserService', () => {
       const result = await coreService.processPayment(processPaymentDto);
       expect(result).toEqual({ success: true });
     });
+
+    it('should return "Invalid session ID" error', async () => {
+      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce(null);
+
+      try {
+        await coreService.processPayment(processPaymentDto);
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Invalid session ID');
+      }
+    });
+
+    it('should return "Payment already processed" error', async () => {
+      jest
+        .spyOn(paymentRepository, 'findById')
+        .mockResolvedValueOnce({ ...paymentModel, processed: true } as PaymentModel);
+
+      try {
+        await coreService.processPayment(processPaymentDto);
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Payment already processed');
+      }
+    });
+
+    it('should return "Invalid verification code" error', async () => {
+      jest
+        .spyOn(paymentRepository, 'findById')
+        .mockResolvedValueOnce({ ...paymentModel, processed: false, code: '000000' } as PaymentModel);
+
+      try {
+        await coreService.processPayment(processPaymentDto);
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Invalid verification code');
+      }
+    });
+
+    it('should return "Payment session has expired" error', async () => {
+      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce({
+        ...paymentModel,
+        expiresAt: moment().subtract(15, 'minutes').toDate(),
+      } as PaymentModel);
+
+      try {
+        await coreService.processPayment(processPaymentDto);
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Payment session has expired');
+      }
+    });
+
+    it('should return "Insufficient funds for this payment" error', async () => {
+      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce({ ...paymentModel } as PaymentModel);
+      jest.spyOn(userRepository, 'getBalance').mockResolvedValueOnce(0);
+
+      try {
+        await coreService.processPayment(processPaymentDto);
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Insufficient funds for this payment');
+      }
+    });
   });
 
   describe('walletBalance', () => {
@@ -148,6 +211,17 @@ describe('UserService', () => {
 
       expect(userRepository.getUserByDocument).toHaveBeenCalledWith(walletBalanceDto.document);
       expect(result).toEqual({ balance: userModel.balance });
+    });
+
+    it('should return "Invalid phone number" error', async () => {
+      jest.spyOn(userRepository, 'getUserByDocument').mockResolvedValueOnce(userModel);
+      
+      try {
+        await coreService.walletBalance({ ...walletBalanceDto, phone: '0000000000' });
+        fail('Expected to throw but did not'); 
+      } catch (error) {
+        expect(error.message).toBe('Invalid phone number');
+      }
     });
   });
 });

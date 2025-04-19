@@ -15,8 +15,7 @@ export class CoreService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<{ success: boolean }> {
-    const createUserResult = await this.userRepository.createUser(createUserDto);
-    if (!createUserResult) throw new InternalServerErrorException('Unexpected error on user creation');
+    await this.userRepository.createUser(createUserDto);
     return { success: true };
   }
 
@@ -60,7 +59,6 @@ export class CoreService {
     const { document, phone } = walletBalanceDto;
 
     const user = await this.userRepository.getUserByDocument(document);
-    if (!user) throw new NotFoundException('User not found');
     if (user.phone !== phone) throw new BadRequestException('Invalid phone number');
 
     return { balance: user.balance };
