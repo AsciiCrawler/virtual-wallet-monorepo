@@ -37,7 +37,6 @@ export class CoreService {
 
     const payment = await this.paymentRepository.findById(sessionId);
     if (!payment) throw new BadRequestException('Invalid session ID');
-    
     if (payment.processed) throw new BadRequestException('Payment already processed');
     if (payment.code !== code) throw new BadRequestException('Invalid verification code');
     if (moment().isAfter(payment.expiresAt)) throw new BadRequestException('Payment session has expired');
