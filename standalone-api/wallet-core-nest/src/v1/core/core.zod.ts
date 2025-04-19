@@ -15,10 +15,9 @@ export type CreatePaymentResponse = SuccessResponse & {
 
 /*  */
 
-const documentSchemaElement = z
-  .string()
-  .min(8, 'Document must be at least 8 characters')
-  .max(20, 'Document cannot exceed 20 characters');
+const documentSchemaElement = z.string().regex(/^[A-Za-z0-9]{8,20}$/, {
+  message: 'Document must be 8-20 alphanumeric characters',
+});
 
 const phoneSchemaElement = z
   .string()

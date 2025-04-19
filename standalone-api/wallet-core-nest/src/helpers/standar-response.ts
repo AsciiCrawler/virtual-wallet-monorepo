@@ -1,14 +1,14 @@
 export type standarResponseType = {
   data: any;
   success: boolean;
-  code_error: number;
+  code_error: number | string;
   message_error: string;
 };
 
 export const standarResponse = (
   data: any,
   success: boolean = true,
-  code_error: number = 0,
+  code_error: number | string = 0,
   message_error: string = '',
 ): standarResponseType => {
   return {
