@@ -5,6 +5,7 @@ import { PaymentModel, PaymentRepository } from 'src/repository/payment.reposito
 import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { CreatePaymentDto, CreateUserDto, DepositDto, ProcessPaymentDto, WalletBalanceDto } from './core.zod';
 import moment from 'moment';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 
 describe('UserService', () => {
   let coreService: CoreService;

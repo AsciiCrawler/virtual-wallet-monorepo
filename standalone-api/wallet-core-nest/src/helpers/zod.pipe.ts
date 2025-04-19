@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { PipeTransform, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ZodSchema } from 'zod';
 
 export class CustomZodException extends HttpException {
