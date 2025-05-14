@@ -1,0 +1,92 @@
+.mainContainer {
+  /* width: 360px;
+  height: 220px; */
+  width: 306px;
+  height: 172px;
+  background: linear-gradient(135deg, #5e3aee, #2c1c86);
+  border-radius: 16px;
+  color: white;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+.cardNumbersContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+}
+
+.cardNumberLabel {
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin: 2rem 0px 0px 0px;
+}
+
+.cardNumber {
+  font-size: 1.5rem;
+  margin-top: 4px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+/*  */
+
+.cardDetailsContainer {
+  padding: 1rem 0px;
+  margin: auto 0px 0px 0px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.validBox,
+.cvvBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.cvvBox {
+  margin: 0px 0px 0px 2rem;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 50px;
+  height: 32px;
+  margin-left: auto;
+}
+
+.circleRed,
+.circleYellow {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.circleRed {
+  background-color: red;
+  left: 0;
+}
+
+.circleYellow {
+  background-color: yellow;
+  right: 0;
+}

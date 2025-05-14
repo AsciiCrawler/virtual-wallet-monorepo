@@ -1,0 +1,12 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 2rem 0px;
+}
+
+.balanceTitle,
+.balanceText {
+  margin: 0.2rem 0px;
+  font-size: 1.25rem;
+}

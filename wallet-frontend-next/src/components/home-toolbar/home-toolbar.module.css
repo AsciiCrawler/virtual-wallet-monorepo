@@ -1,0 +1,47 @@
+.mainContainer {
+  display: flex;
+  width: 100%;
+  background-color: #4d30cb;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+.subContainer {
+  display: flex;
+  padding: 1rem 0px 1.2rem 0px;
+  width: 100%;
+  max-width: 480px;
+  justify-content: center;
+}
+
+.item {
+  background-color: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  margin: 0px 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 125ms ease;
+}
+
+.item:hover {
+  filter: brightness(0.8);
+  transform: scale(1.1);
+}
+
+.itemIcon {
+  width: 32px;
+  box-sizing: 32px;
+  box-sizing: border-box;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.itemText {
+  font-size: 12px;
+  line-height: 1.2;
+}

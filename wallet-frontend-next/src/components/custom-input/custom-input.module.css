@@ -1,0 +1,21 @@
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  width: 80%;
+  max-width: 320px;
+}
+
+.styledInput {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid gray;
+  outline: none;
+  font-weight: bold;
+  padding: 10px 0px;
+}
+
+.styledInput:focus {
+  border-bottom-color: #c2185b;
+  outline: none;
+}

@@ -6,18 +6,16 @@ import AppTitleComponent from "@/components/app-title/app-title.component";
 import SeparatorComponent from "@/components/separator/separator.component";
 import AppSubtitleComponent from "@/components/app-subtitle/app-subtitle.component";
 import RegisterOrLoginLinkComponent from "@/components/register-or-login-link/register-or-login-link.component";
-import { useGlobalStore } from "./zustand";
-import { useRouter } from "next/navigation";
+import { useGlobalStore } from "@/app/zustand";
 
-export default function Index() {
+export default function Home() {
   const globalStore = useGlobalStore();
-  const router = useRouter();
 
   return (
     <main className="mainContainer">
       <AppTitleComponent />
       <SeparatorComponent />
-      <AppSubtitleComponent text="BIENVENIDO" />
+      <AppSubtitleComponent text="REGISTRO" />
       <CustomInputComponent
         placeholder="Documento"
         onChange={(e) => globalStore.setDocument(e.target.value)}
@@ -32,17 +30,29 @@ export default function Index() {
         type="text"
       />
 
+      <CustomInputComponent
+        placeholder="Nombre"
+        onChange={(e) => globalStore.setName(e.target.value)}
+        value={globalStore.name}
+        type="text"
+      />
+
+      <CustomInputComponent
+        placeholder="Email"
+        onChange={(e) => globalStore.setEmail(e.target.value)}
+        value={globalStore.email}
+        type="text"
+      />
+
       <CustomButtonComponent
         disabled={false}
-        onClick={() => {
-          router.push("/home");
-        }}
-        text="Iniciar sesion"
+        onClick={() => {}}
+        text="Registrarse"
       />
 
       <RegisterOrLoginLinkComponent
-        text="Nuevo en Virtual Wallet? Unete ahora"
-        route="/registro"
+        text="Ya tienes cuenta? Inicia sesion"
+        route="/"
       />
     </main>
   );
