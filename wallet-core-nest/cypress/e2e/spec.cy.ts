@@ -19,7 +19,7 @@ const TestDataGenerator = {
 };
 
 const ApiClient = {
-  baseUrl: 'http://localhost:3000/v1',
+  baseUrl: 'http://localhost:10000/v1',
 
   createUser(user) {
     return cy.request('POST', `${this.baseUrl}/create-user`, user);
@@ -31,6 +31,10 @@ const ApiClient = {
 
   getWalletBalance(params) {
     return cy.request('POST', `${this.baseUrl}/wallet-balance`, params);
+  },
+
+  getAllUserEvents(params) {
+    return cy.request('POST', `${this.baseUrl}/get-all-user-events`, params);
   },
 
   createPayment(params) {
@@ -110,7 +114,9 @@ describe('Wallet End-to-End Testing', () => {
         expect(response.body.data.success).to.be.true;
       });
     });
+  });
 
+  context('Events verification', () => {
     it('should verify wallet balance is now $500', () => {
       ApiClient.getWalletBalance({
         document: user.document,
@@ -119,6 +125,17 @@ describe('Wallet End-to-End Testing', () => {
         expect(response.status).to.eq(200);
         expect(response.body.success).to.be.true;
         expect(response.body.data.balance).to.eq(500);
+      });
+    });
+
+    it('should get events and be length 2 (Deposit and Payment)', () => {
+      ApiClient.getAllUserEvents({
+        document: user.document,
+        phone: user.phone,
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.success).to.be.true;
+        expect(response.body.data.length).to.equal(2);
       });
     });
   });

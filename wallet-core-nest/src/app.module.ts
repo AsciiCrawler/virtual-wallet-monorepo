@@ -4,7 +4,7 @@ import { CoreService } from './v1/core/core.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UserModel, UserModelSchema, UserRepository } from './repository/user.repository';
-import { PaymentModel, PaymentModelSchema, PaymentRepository } from './repository/payment.repository';
+import { EventModel, EventModelSchema, EventRepository } from './repository/event.repository';
 
 @Module({
   imports: [
@@ -12,10 +12,10 @@ import { PaymentModel, PaymentModelSchema, PaymentRepository } from './repositor
     MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING || ''),
     MongooseModule.forFeature([
       { name: UserModel.name, schema: UserModelSchema },
-      { name: PaymentModel.name, schema: PaymentModelSchema },
+      { name: EventModel.name, schema: EventModelSchema },
     ]),
   ],
   controllers: [CoreController],
-  providers: [CoreService, UserRepository, PaymentRepository],
+  providers: [CoreService, UserRepository, EventRepository],
 })
 export class AppModule {}

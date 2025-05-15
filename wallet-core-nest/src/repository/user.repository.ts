@@ -36,7 +36,7 @@ export class UserRepository {
     return createdUser.save();
   }
 
-  async depositFunds(document: string, amount: number): Promise<{ newBalance: number }> {
+  async incrementBalance(document: string, amount: number, session?: ClientSession): Promise<{ newBalance: number }> {
     if (amount <= 0) {
       throw new BadRequestException('Deposit amount must be positive');
     }
@@ -44,7 +44,7 @@ export class UserRepository {
     const updatedUser = await this.userModel.findOneAndUpdate(
       { document },
       { $inc: { balance: amount } },
-      { new: true },
+      { new: true, session },
     );
 
     if (!updatedUser) {

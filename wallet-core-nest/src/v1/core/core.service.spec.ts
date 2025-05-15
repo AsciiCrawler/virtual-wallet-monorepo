@@ -1,7 +1,7 @@
 import { UserModel, UserRepository } from 'src/repository/user.repository';
 import { CoreService } from './core.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PaymentModel, PaymentRepository } from 'src/repository/payment.repository';
+import { EventModel, EventRepository } from 'src/repository/event.repository';
 import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { CreatePaymentDto, CreateUserDto, DepositDto, ProcessPaymentDto, WalletBalanceDto } from './core.zod';
 import moment from 'moment';
@@ -10,7 +10,7 @@ import { describe, it, expect, beforeEach } from '@jest/globals';
 describe('UserService', () => {
   let coreService: CoreService;
   let userRepository: UserRepository;
-  let paymentRepository: PaymentRepository;
+  let eventRepository: EventRepository;
 
   const userModel = {
     _id: '680390ffbd487766facf7174',
@@ -28,7 +28,7 @@ describe('UserService', () => {
     code: '2350',
     expiresAt: moment().add(15, 'minute').toDate(),
     processed: false,
-  } as PaymentModel;
+  } as EventModel;
 
   /*  */
 
@@ -81,15 +81,15 @@ describe('UserService', () => {
       providers: [
         CoreService,
         UserRepository,
-        PaymentRepository,
+        EventRepository,
         { provide: getConnectionToken(), useValue: mockConnection },
         { provide: getModelToken(UserModel.name), useValue: UserModel },
-        { provide: getModelToken(PaymentModel.name), useValue: PaymentModel },
+        { provide: getModelToken(EventModel.name), useValue: EventModel },
       ],
     }).compile();
     coreService = module.get<CoreService>(CoreService);
     userRepository = module.get<UserRepository>(UserRepository);
-    paymentRepository = module.get<PaymentRepository>(PaymentRepository);
+    eventRepository = module.get<EventRepository>(EventRepository);
   });
 
   /*  */
@@ -110,7 +110,8 @@ describe('UserService', () => {
 
   describe('deposit', () => {
     it('should successfully deposit funds in account', async () => {
-      jest.spyOn(userRepository, 'depositFunds').mockResolvedValueOnce({ newBalance: 1000 });
+      jest.spyOn(eventRepository, 'createDepositEvent').mockResolvedValueOnce({} as EventModel);
+      jest.spyOn(userRepository, 'incrementBalance').mockResolvedValueOnce({ newBalance: 1000 });
       const result = await coreService.deposit(depositDto);
       expect(result).toEqual({ success: true });
     });
@@ -120,7 +121,7 @@ describe('UserService', () => {
     it('should successfully create a payment', async () => {
       const id = '680391c5fdddc5ec257e08da';
       const code = '3050';
-      jest.spyOn(paymentRepository, 'createPayment').mockResolvedValueOnce({ id, code } as PaymentModel);
+      jest.spyOn(eventRepository, 'createPaymentEvent').mockResolvedValueOnce({ id, code } as EventModel);
 
       const result = await coreService.createPayment(createPaymentDto);
 
@@ -130,8 +131,8 @@ describe('UserService', () => {
 
   describe('processPayment', () => {
     it('should successfully process a payment', async () => {
-      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce(paymentModel);
-      jest.spyOn(paymentRepository, 'updatePaymentStatus').mockResolvedValueOnce(paymentModel);
+      jest.spyOn(eventRepository, 'findEventById').mockResolvedValueOnce(paymentModel);
+      jest.spyOn(eventRepository, 'updateEventStatus').mockResolvedValueOnce(paymentModel);
       jest.spyOn(userRepository, 'reduceBalance').mockResolvedValueOnce({ newBalance: 0 });
       jest.spyOn(userRepository, 'getBalance').mockResolvedValueOnce(1000);
 
@@ -140,7 +141,7 @@ describe('UserService', () => {
     });
 
     it('should return "Invalid session ID" error', async () => {
-      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce(null);
+      jest.spyOn(eventRepository, 'findEventById').mockResolvedValueOnce(null);
 
       try {
         await coreService.processPayment(processPaymentDto);
@@ -152,8 +153,8 @@ describe('UserService', () => {
 
     it('should return "Payment already processed" error', async () => {
       jest
-        .spyOn(paymentRepository, 'findById')
-        .mockResolvedValueOnce({ ...paymentModel, processed: true } as PaymentModel);
+        .spyOn(eventRepository, 'findEventById')
+        .mockResolvedValueOnce({ ...paymentModel, processed: true } as EventModel);
 
       try {
         await coreService.processPayment(processPaymentDto);
@@ -165,8 +166,8 @@ describe('UserService', () => {
 
     it('should return "Invalid verification code" error', async () => {
       jest
-        .spyOn(paymentRepository, 'findById')
-        .mockResolvedValueOnce({ ...paymentModel, processed: false, code: '000000' } as PaymentModel);
+        .spyOn(eventRepository, 'findEventById')
+        .mockResolvedValueOnce({ ...paymentModel, processed: false, code: '000000' } as EventModel);
 
       try {
         await coreService.processPayment(processPaymentDto);
@@ -177,10 +178,10 @@ describe('UserService', () => {
     });
 
     it('should return "Payment session has expired" error', async () => {
-      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce({
+      jest.spyOn(eventRepository, 'findEventById').mockResolvedValueOnce({
         ...paymentModel,
         expiresAt: moment().subtract(15, 'minutes').toDate(),
-      } as PaymentModel);
+      } as EventModel);
 
       try {
         await coreService.processPayment(processPaymentDto);
@@ -191,7 +192,7 @@ describe('UserService', () => {
     });
 
     it('should return "Insufficient funds for this payment" error', async () => {
-      jest.spyOn(paymentRepository, 'findById').mockResolvedValueOnce({ ...paymentModel } as PaymentModel);
+      jest.spyOn(eventRepository, 'findEventById').mockResolvedValueOnce({ ...paymentModel } as EventModel);
       jest.spyOn(userRepository, 'getBalance').mockResolvedValueOnce(0);
 
       try {
@@ -218,6 +219,30 @@ describe('UserService', () => {
 
       try {
         await coreService.walletBalance({ ...walletBalanceDto, phone: '0000000000' });
+        fail('Expected to throw but did not');
+      } catch (error) {
+        expect(error.message).toBe('Invalid phone number');
+      }
+    });
+  });
+
+  describe('getAllUserEvents', () => {
+    it('should successfully get user events', async () => {
+      jest.spyOn(userRepository, 'getUserByDocument').mockResolvedValueOnce(userModel);
+      jest.spyOn(eventRepository, 'getAllEventsByDocument').mockResolvedValueOnce([]);
+
+      const result = await coreService.getAllUserEvents(walletBalanceDto);
+
+      expect(userRepository.getUserByDocument).toHaveBeenCalledWith(walletBalanceDto.document);
+      expect(result).toEqual([]);
+    });
+
+    it('should return "Invalid phone number" error', async () => {
+      jest.spyOn(userRepository, 'getUserByDocument').mockResolvedValueOnce(userModel);
+      jest.spyOn(eventRepository, 'getAllEventsByDocument').mockResolvedValueOnce([]);
+
+      try {
+        await coreService.getAllUserEvents({ ...walletBalanceDto, phone: '0000000000' });
         fail('Expected to throw but did not');
       } catch (error) {
         expect(error.message).toBe('Invalid phone number');

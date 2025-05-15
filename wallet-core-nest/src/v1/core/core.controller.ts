@@ -81,4 +81,15 @@ export class CoreController {
   ): Promise<standarResponseType> {
     return standarResponse(await this.coreService.walletBalance(walletBalanceDto));
   }
+
+  @ApiOperation({ summary: 'Get user events' })
+  @HttpCode(HttpStatus.OK)
+  @Post('get-all-user-events')
+  @ApiBody({ schema: zodToOpenAPI(WalletBalanceSchema) })
+  @ApiResponse({ example: standarResponse({ balance: 4500 } as BalanceResponse) })
+  async getAllUserEvents(
+    @Body(new ZodPipe(WalletBalanceSchema)) walletBalanceDto: WalletBalanceDto,
+  ): Promise<standarResponseType> {
+    return standarResponse(await this.coreService.getAllUserEvents(walletBalanceDto));
+  }
 }
