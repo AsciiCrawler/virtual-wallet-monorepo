@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "serve": "serve out"
+    "serve": "serve out -l 10001"
   },
   "dependencies": {
     "axios": "^1.9.0",

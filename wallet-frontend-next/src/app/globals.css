@@ -71,7 +71,7 @@ body::before {
   .mainContainer {
     width: 100%;
     max-width: 420px;
-    height: 100vh;
+    height: 85vh;
     max-height: 780px;
     margin: 0 auto;
     padding: 2rem 0px;

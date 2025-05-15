@@ -19,12 +19,12 @@ API independiente - SIN SERVIDOR SOAP/LARAVEL
 ![](docs/jest.png "Jest")
 ![](docs/cypress.png "Cypress")
 
-## Vista previa en vivo
+## Vista previa
 
-[Vista previa en vivo de Swagger](https://wallet-standalone-api.asciicrawler.com/api)
+[Vista previa de Swagger](https://wallet-standalone-api.asciicrawler.com/api)
 
 
-## Requisitos previos
+## Requisitos
 
 - Node.js (se recomienda v18+)
 - MongoDB (se recomienda v6+)

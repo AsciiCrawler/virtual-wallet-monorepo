@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./event-list.module.css";
 import { useGlobalStore } from "@/app/zustand";
 import { EventDTO } from "@/types/core.types";
