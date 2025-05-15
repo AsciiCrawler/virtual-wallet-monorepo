@@ -88,6 +88,15 @@ export class CoreService {
     const user = await this.userRepository.getUserByDocument(document);
     if (user.phone !== phone) throw new BadRequestException('Invalid phone number');
 
-    return await this.eventRepository.getAllEventsByDocument(document);
+    return (await this.eventRepository.getAllEventsByDocument(document))
+      .filter((value) => value.processed === true)
+      .map((value) => {
+        return {
+          _id: value.id,
+          amount: value.amount,
+          createdAt: value.createdAt,
+          type: value.type,
+        };
+      });
   }
 }

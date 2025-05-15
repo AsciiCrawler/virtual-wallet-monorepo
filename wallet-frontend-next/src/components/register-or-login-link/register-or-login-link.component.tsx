@@ -1,20 +1,19 @@
 import React from "react";
 import styles from "./register-or-login-link.module.css";
-import Link from "next/link";
 
 type RegisterOrLoginLinkProps = {
   text: string;
-  route: string;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const RegisterOrLoginLinkComponent: React.FC<RegisterOrLoginLinkProps> = ({
   text,
-  route,
+  onClick,
 }) => {
   return (
-    <Link className={styles.mainStyle} href={route}>
+    <button onClick={onClick} className={styles.mainStyle}>
       {text}
-    </Link>
+    </button>
   );
 };
 

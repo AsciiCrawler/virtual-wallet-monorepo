@@ -24,7 +24,7 @@ export class EventModel extends Document {
   @Prop({ required: false, type: Date })
   expiresAt: Date;
 
-  @Prop({ required: true, type: Date, default: moment().toDate() })
+  @Prop({ required: true, type: Date })
   createdAt: Date;
 }
 
@@ -32,18 +32,18 @@ export const EventModelSchema = SchemaFactory.createForClass(EventModel);
 
 @Injectable()
 export class EventRepository {
-  constructor(@InjectModel(EventModel.name) private paymentModel: Model<EventModel>) {}
+  constructor(@InjectModel(EventModel.name) private eventModel: Model<EventModel>) {}
 
   async createPaymentEvent(document: string, amount: number, session?: ClientSession): Promise<EventModel> {
     const code = Math.floor(Math.random() * 1000000)
       .toString()
       .padStart(6, '0');
     const expiresAt = moment().add(15, 'minutes').toDate();
-    const event = new this.paymentModel({
+    const event = new this.eventModel({
       document,
       amount,
       type: 'PAYMENT',
-
+      createdAt: moment().toDate(),
       code,
       expiresAt,
       processed: false,
@@ -53,11 +53,11 @@ export class EventRepository {
   }
 
   async createDepositEvent(document: string, amount: number, session?: ClientSession): Promise<EventModel> {
-    const event = new this.paymentModel({
+    const event = new this.eventModel({
       document,
       amount,
       type: 'DEPOSIT',
-
+      createdAt: moment().toDate(),
       processed: true,
     });
 
@@ -65,7 +65,7 @@ export class EventRepository {
   }
 
   async updateEventStatus(id: string, processed: boolean, session?: ClientSession): Promise<EventModel | null> {
-    return this.paymentModel
+    return this.eventModel
       .findByIdAndUpdate(
         id,
         { processed: processed },
@@ -75,14 +75,14 @@ export class EventRepository {
   }
 
   async getEventByDocument(document: string): Promise<EventModel | null> {
-    return this.paymentModel.findOne({ document }).exec();
+    return this.eventModel.findOne({ document }).exec();
   }
 
   async findEventById(id: string): Promise<EventModel | null> {
-    return this.paymentModel.findById(id).exec();
+    return this.eventModel.findById(id).exec();
   }
 
   async getAllEventsByDocument(document: string): Promise<EventModel[]> {
-    return this.paymentModel.find({ document }).exec();
+    return this.eventModel.find({ document }).exec();
   }
 }

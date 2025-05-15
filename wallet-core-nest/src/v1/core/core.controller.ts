@@ -19,6 +19,7 @@ import {
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { zodToOpenAPI } from 'src/helpers/zod-to-openapi';
 import { standarResponse, standarResponseType } from 'src/helpers/standar-response';
+import { EventModel } from 'src/repository/event.repository';
 
 @Controller('v1')
 export class CoreController {
@@ -86,7 +87,7 @@ export class CoreController {
   @HttpCode(HttpStatus.OK)
   @Post('get-all-user-events')
   @ApiBody({ schema: zodToOpenAPI(WalletBalanceSchema) })
-  @ApiResponse({ example: standarResponse({ balance: 4500 } as BalanceResponse) })
+  @ApiResponse({ example: standarResponse({} as EventModel[]) })
   async getAllUserEvents(
     @Body(new ZodPipe(WalletBalanceSchema)) walletBalanceDto: WalletBalanceDto,
   ): Promise<standarResponseType> {

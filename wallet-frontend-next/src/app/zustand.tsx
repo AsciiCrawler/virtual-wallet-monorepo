@@ -1,3 +1,4 @@
+import { EventDTO } from "@/types/core.types";
 import { create } from "zustand";
 
 interface IGlobalState {
@@ -12,6 +13,15 @@ interface IGlobalState {
 
   phone: string;
   setPhone: (text: string) => void;
+
+  balance: number;
+  setBalance: (value: number) => void;
+
+  logged: boolean;
+  setLogged: (value: boolean) => void;
+
+  events: EventDTO[];
+  setEvents: (value: EventDTO[]) => void;
 }
 
 export const useGlobalStore = create<IGlobalState>()((set) => ({
@@ -26,4 +36,13 @@ export const useGlobalStore = create<IGlobalState>()((set) => ({
 
   phone: "",
   setPhone: (text) => set(() => ({ phone: text })),
+
+  balance: 0,
+  setBalance: (value) => set(() => ({ balance: value })),
+
+  logged: false,
+  setLogged: (value) => set(() => ({ logged: value })),
+
+  events: [],
+  setEvents: (value) => set(() => ({ events: value })),
 }));

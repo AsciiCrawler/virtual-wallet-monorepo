@@ -5,13 +5,13 @@ const CreditCardComponent: React.FC = () => {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.cardNumbersContainer}>
-        <div className={styles.cardNumberLabel}>CARD NUMBER</div>
+        <div className={styles.cardNumberLabel}>Número de tarjeta</div>
         <div className={styles.cardNumber}>**** **** **** 1234</div>
       </div>
 
       <div className={styles.cardDetailsContainer}>
         <div className={styles.validBox}>
-          <div className={styles.label}>VALID</div>
+          <div className={styles.label}>Expiración</div>
           <div className={styles.value}>10/28</div>
         </div>
         <div className={styles.cvvBox}>

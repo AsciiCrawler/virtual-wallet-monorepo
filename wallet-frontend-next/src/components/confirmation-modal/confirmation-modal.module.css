@@ -1,0 +1,75 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #3d259f, #2c1c86);
+  filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.5));
+  border-radius: 16px;
+  width: 320px;
+  font-family: "Arial", sans-serif;
+}
+
+.amountDisplay {
+  display: flex;
+  align-items: baseline;
+  font-size: 36px;
+  margin: 1.25rem 0px;
+}
+
+.dollarSign {
+  font-size: 28px;
+  margin-right: 4px;
+}
+
+.codeChar{
+  margin: 0px 4px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-gap: 12px;
+  margin-bottom: 24px;
+}
+
+.key {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  border: none;
+  background-color: #463ede;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.key:hover {
+  filter: brightness(1.1);
+}
+
+.transferButton {
+  background-color: transparent;
+  border: 2px solid wheat;
+  border-radius: 9999px;
+  color: white;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}

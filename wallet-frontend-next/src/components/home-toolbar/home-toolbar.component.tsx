@@ -16,12 +16,12 @@ const HomeToolbarComponent: React.FC<HomeToolbarProps> = ({
     <div className={styles.mainContainer}>
       <div className={styles.subContainer}>
         <button onClick={onDepositClick} className={styles.item}>
-          <img src={depositImage.src} className={styles.itemIcon} alt="" />
+          <img src={depositImage.src} className={styles.itemIcon} alt="Depositar" />
           <span className={styles.itemText}>Depositar</span>
         </button>
         <button onClick={onTransferClick} className={styles.item}>
-          <img src={payImage.src} className={styles.itemIcon} alt="" />
-          <span className={styles.itemText}>Transferir & Pagar</span>
+          <img src={payImage.src} className={styles.itemIcon} alt="Transferir o pagar" />
+          <span className={styles.itemText}>Transferir o pagar</span>
         </button>
       </div>
     </div>

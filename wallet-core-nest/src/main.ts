@@ -5,7 +5,9 @@ import { HttpExceptionFilter } from './middleware/catch.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.enableCors({
+    origin: '*',
+  });
   const config = new DocumentBuilder()
     .setTitle('wallet-core-nest')
     .setDescription('wallet-core-nest project')
@@ -16,6 +18,6 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 10000);
 }
 bootstrap();

@@ -10,7 +10,7 @@ const AvailableBalanceComponent: React.FC<AvailableBalanceProps> = ({
 }) => {
   return (
     <div className={styles.mainContainer}>
-      <span className={styles.balanceText}>{text}</span>
+      <span className={styles.balanceText}>${text}</span>
       <span className={styles.balanceTitle}>Saldo disponible</span>
     </div>
   );
